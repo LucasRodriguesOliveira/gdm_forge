@@ -3,7 +3,7 @@ import { CreateContactUseCase } from 'src/application/usecase/contact/create-con
 import { PresenterInterceptor } from 'src/infrastructure/common/interceptor/presenter.interceptor';
 import { CreateContactProxy } from 'src/infrastructure/usecase-proxy/proxies/contact/create-contact.proxy';
 import { ContactResult } from './presenter/contact.result';
-import { GrpcMethod } from '@nestjs/microservices';
+import { GrpcMethod, GrpcStreamMethod } from '@nestjs/microservices';
 import { GRPCService } from 'src/infrastructure/grpc/service.enum';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { Result } from 'src/domain/types/result';
@@ -15,6 +15,7 @@ import { FindContactByIdUseCase } from 'src/application/usecase/contact/find-con
 import { ListContactProxy } from 'src/infrastructure/usecase-proxy/proxies/contact/list-contact.proxy';
 import { ListContactUseCase } from 'src/application/usecase/contact/list-contact.usecase';
 import { QueryContactOptions } from 'src/domain/repository/contact-repository.interface';
+import { Observable, Subject } from 'rxjs';
 
 @Controller('contact')
 @UseInterceptors(new PresenterInterceptor(ContactResult, { entity: 'contact' }))
@@ -47,5 +48,27 @@ export class ContactController {
     queryContact: QueryContactOptions,
   ): Promise<Result<Contact[], ErrorResponse>> {
     return this.listContactUseCase.run(queryContact);
+  }
+
+  @GrpcStreamMethod(GRPCService.CONTACT)
+  public bulkCreate(
+    messages: Observable<CreateContactDto>,
+  ): Observable<Result<Contact, ErrorResponse>> {
+    const subject = new Subject<Result<Contact, ErrorResponse>>();
+
+    const onNext = async (message: CreateContactDto) => {
+      const result = await this.createContactUseCase.run(message);
+
+      subject.next(result);
+    };
+
+    const onComplete = () => subject.complete();
+
+    messages.subscribe({
+      next: onNext,
+      complete: onComplete,
+    });
+
+    return subject.asObservable();
   }
 }

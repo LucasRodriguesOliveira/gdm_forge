@@ -40,6 +40,7 @@ service ContactService {
   rpc FindById(FindContactByIdRequest) returns (ContactResponse);
   rpc Create(CreateContactDtoRequest) returns (ContactResponse);
   rpc List(QueryContactRequest) returns (ContactListResponse);
+  rpc BulkCreate(stream CreateContactDtoRequest) returns (stream ContactResponse);
 }
 
 message FindContactByIdRequest {
