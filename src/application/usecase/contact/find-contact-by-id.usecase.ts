@@ -11,9 +11,12 @@ export class FindContactByIdUseCase {
     private readonly logger: ILoggerService,
   ) {}
 
-  public async run(contactId: number): Promise<Result<Contact, ErrorResponse>> {
+  public async run(
+    contactId: Contact['_id'],
+    userId: string,
+  ): Promise<Result<Contact, ErrorResponse>> {
     try {
-      const contact = await this.contactRepository.findById(contactId);
+      const contact = await this.contactRepository.findById(contactId, userId);
 
       return {
         value: contact,
@@ -24,13 +27,11 @@ export class FindContactByIdUseCase {
         `Failed to find contact\nParams: ${JSON.stringify({ contactId })}`,
         err,
       );
-
-      // unmapped error, for now, i shall log in hope a error occurs, so I can make some notes
       const b64Code = btoa(FindContactByIdUseCase.name);
 
       return {
         error: {
-          code: ErrorCode.UNEXPECTED,
+          code: ErrorCode.NOT_FOUND,
           message: `gdm_forge:[${b64Code}]`,
         },
       };

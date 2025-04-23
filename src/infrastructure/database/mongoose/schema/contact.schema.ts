@@ -1,17 +1,20 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, ObjectId } from 'mongoose';
 
 export const ContactSchema = new mongoose.Schema({
-  id: Number,
+  oldid: Number,
   name: String,
   phone: String,
   state: String,
+  userId: String,
 });
 
 export const contactSchemaName = 'Contact';
 
 export interface IContactModel extends Document {
-  readonly id: number;
+  readonly _id: ObjectId;
+  readonly oldid: number;
   readonly name: string;
   readonly phone: string;
   readonly state: string;
+  readonly userId: string;
 }

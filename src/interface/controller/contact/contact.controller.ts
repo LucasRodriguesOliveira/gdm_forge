@@ -16,9 +16,9 @@ import { ListContactProxy } from 'src/infrastructure/usecase-proxy/proxies/conta
 import { ListContactUseCase } from 'src/application/usecase/contact/list-contact.usecase';
 import { QueryContactOptions } from 'src/domain/repository/contact-repository.interface';
 import { Observable, Subject } from 'rxjs';
+import { PaginatedContact } from '../../../domain/repository/paginated-contact.result';
 
 @Controller('contact')
-@UseInterceptors(new PresenterInterceptor(ContactResult, { entity: 'contact' }))
 export class ContactController {
   constructor(
     @Inject(CreateContactProxy.Token)
@@ -30,6 +30,9 @@ export class ContactController {
   ) {}
 
   @GrpcMethod(GRPCService.CONTACT)
+  @UseInterceptors(
+    new PresenterInterceptor(ContactResult, { entity: 'contact' }),
+  )
   public async create(
     createContactDto: CreateContactDto,
   ): Promise<Result<Contact, ErrorResponse>> {
@@ -37,20 +40,34 @@ export class ContactController {
   }
 
   @GrpcMethod(GRPCService.CONTACT)
+  @UseInterceptors(
+    new PresenterInterceptor(ContactResult, { entity: 'contact' }),
+  )
   public async findById({
     id,
+    userId,
   }: FindContactById): Promise<Result<Contact, ErrorResponse>> {
-    return this.findContactByIdUseCase.run(id);
+    return this.findContactByIdUseCase.run(id, userId);
   }
 
   @GrpcMethod(GRPCService.CONTACT)
+  @UseInterceptors(
+    new PresenterInterceptor(
+      ContactResult,
+      { entity: 'contact', array: 'items' },
+      { paginated: true },
+    ),
+  )
   public async list(
     queryContact: QueryContactOptions,
-  ): Promise<Result<Contact[], ErrorResponse>> {
+  ): Promise<Result<PaginatedContact, ErrorResponse>> {
     return this.listContactUseCase.run(queryContact);
   }
 
   @GrpcStreamMethod(GRPCService.CONTACT)
+  @UseInterceptors(
+    new PresenterInterceptor(ContactResult, { entity: 'contact' }),
+  )
   public bulkCreate(
     messages: Observable<CreateContactDto>,
   ): Observable<Result<Contact, ErrorResponse>> {

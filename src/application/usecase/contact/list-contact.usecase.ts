@@ -1,5 +1,4 @@
 import { ILoggerService } from 'src/domain/logger/logger.interface';
-import { Contact } from 'src/domain/model/contact.model';
 import {
   IContactRepository,
   QueryContactOptions,
@@ -7,6 +6,7 @@ import {
 import { ErrorCode } from 'src/domain/types/error-code.enum';
 import { ErrorResponse } from 'src/domain/types/error.interface';
 import { Result } from 'src/domain/types/result';
+import { PaginatedContact } from '../../../domain/repository/paginated-contact.result';
 
 export class ListContactUseCase {
   constructor(
@@ -16,12 +16,12 @@ export class ListContactUseCase {
 
   public async run(
     query: QueryContactOptions,
-  ): Promise<Result<Contact[], ErrorResponse>> {
+  ): Promise<Result<PaginatedContact, ErrorResponse>> {
     try {
-      const contacts = await this.contactRepository.findAll(query);
+      const result = await this.contactRepository.findAll(query);
 
       return {
-        value: contacts,
+        value: result,
       };
     } catch (err) {
       this.logger.error(
@@ -30,7 +30,7 @@ export class ListContactUseCase {
         err,
       );
 
-      // unmapped error, for now, i shall log in hope a error occurs, so I can make some notes
+      // unmapped error, for now, i shall log in hope a error occurs, so I can take some notes
       const b64Code = btoa(ListContactUseCase.name);
 
       return {

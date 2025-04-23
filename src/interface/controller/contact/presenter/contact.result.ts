@@ -4,7 +4,7 @@ import { Contact } from 'src/domain/model/contact.model';
 @Exclude()
 export class ContactResult extends Contact {
   @Expose()
-  id: number;
+  _id: string;
 
   @Expose()
   name: string;

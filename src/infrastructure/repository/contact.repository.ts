@@ -7,6 +7,7 @@ import { contactProviderToken } from '../database/mongoose/contact.provider';
 import { Model, RootFilterQuery } from 'mongoose';
 import { IContactModel } from '../database/mongoose/schema/contact.schema';
 import { Contact } from 'src/domain/model/contact.model';
+import { PaginatedContact } from '../../domain/repository/paginated-contact.result';
 
 export class ContactRepository implements IContactRepository {
   constructor(
@@ -17,11 +18,18 @@ export class ContactRepository implements IContactRepository {
   public async insert(contactData: Partial<Contact>): Promise<Contact> {
     const contactCreated = new this.contactModel(contactData);
 
-    return contactCreated.save();
+    const result = await contactCreated.save();
+
+    return {
+      ...result.toJSON(),
+      _id: `${result._id}`,
+    };
   }
 
-  public async findAll(query: QueryContactOptions): Promise<Contact[]> {
-    let filter: RootFilterQuery<IContactModel> = {};
+  public async findAll(query: QueryContactOptions): Promise<PaginatedContact> {
+    let filter: RootFilterQuery<IContactModel> = {
+      userId: query.userId,
+    };
 
     if (query?.name) {
       filter = {
@@ -36,10 +44,37 @@ export class ContactRepository implements IContactRepository {
       };
     }
 
-    return this.contactModel.find(filter).exec();
+    const skip = query.pageSize * query.page;
+    const limit = query.pageSize;
+
+    const result = await this.contactModel
+      .find(filter, null, { skip, limit })
+      .exec();
+
+    const count = await this.contactModel.countDocuments(filter);
+
+    return {
+      total: count,
+      contacts: result.map((item) => ({
+        ...item.toJSON(),
+        _id: `${item._id}`,
+      })),
+      page: query.page,
+      pageSize: query.pageSize,
+    };
   }
 
-  findById(contactId: number): Promise<Contact> {
-    return this.contactModel.findOne({ id: contactId }).exec();
+  public async findById(
+    contactId: Contact['_id'],
+    userId: string,
+  ): Promise<Contact> {
+    const result = await this.contactModel
+      .findOne({ _id: contactId, userId })
+      .exec();
+
+    return {
+      ...result.toJSON(),
+      _id: `${result._id}`,
+    };
   }
 }

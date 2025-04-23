@@ -6,4 +6,15 @@ services:
     env_file:
       - .env
     ports:
-      - "50051:50051"
+      - "${PORT}:${PORT}"
+    depends_on:
+      - db
+  db:
+    image: mongo:latest
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+
