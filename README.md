@@ -15,7 +15,7 @@ NoSQL database such as MongoDB
 It's highly recommended to use docker for this project
 
 ```bash
-$ docker compose build
+$ docker compose create --build
 ```
 
 This project is expected to run with other projects such as [Whisper](https://github.com/LucasRodriguesOliveira/gdm_whisper) and [Scribe](https://github.com/LucasRodriguesOliveira/gdm_scribe), with **Whisper** been a dependency. So, to keep everything running smoothly, you must run **Whisper** first. With **Whisper** running, you have to include this project in the same network in order to allow **Forge** to send messages to the queue in the **Whisper** container (the container, not the project, which is probably called `gdm_whisper-rmq-1`). To do so, type the following in the bash:
@@ -27,6 +27,7 @@ To create a new network, it's pretty simple:
 ```bash
 $ docker network create <network_name>
 # I would suggest `gdm_rabbitmq` for semantics
+
 $ docker network connect <network_name> gdm_whisper-rmq-1
 ```
 
@@ -41,6 +42,7 @@ With everything in order, we can run this project right away
 ```bash
 $ docker compose up -d
 # We don't wanna that boring database logs, right? *wink*
+
 $ docker logs --follow gdm_forge-api-1
 # Just the application logs is fine
 ```
@@ -55,15 +57,23 @@ If you want to go a little ahead, create a network and add this project to it:
 $ docker network create <some_network>
 # what about `gdm_scribe_forge`?
 
-$ docker network connect gdm_scribe_forge gdm_forge-api-1
+$ docker network connect --alias forge gdm_scribe_forge gdm_forge-api-1
 ```
+
+<details>
+<summary>Why are we adding "<strong><em>--alias forge</em></strong>"?</summary>
+<p>That's the reason why we're creating a different network, to make things easier for gdm_scribe when we pass the env value for the gdm_forge url</p>
+<p>Instead of http://<strong>gdm_forge-api-1</strong>:50051</p>
+<p>It's much better: http://<strong>forge</strong>:50051</p>
+</details>
+<br/>
 
 With that, both containers can see each other, which for Forge doesn't mean much, but 
 it means everything for gdm_scribe
 
 We're halfway there! Now, go to [Scribe](https://github.com/LucasRodriguesOliveira/gdm_scribe) Project and Rock!
 
-## Compile and run the project (locally)
+## Tests
 
 ```bash
 ## Run tests
