@@ -17,6 +17,9 @@ import { ListContactUseCase } from 'src/application/usecase/contact/list-contact
 import { QueryContactOptions } from 'src/domain/repository/contact-repository.interface';
 import { Observable, Subject } from 'rxjs';
 import { PaginatedContact } from '../../../domain/repository/paginated-contact.result';
+import { NotifyProxy } from '../../../infrastructure/usecase-proxy/proxies/contact/notify.proxy';
+import { NotifyUseCase } from '../../../application/usecase/contact/notify.usecase';
+import { User } from '../../../domain/model/user.model';
 
 @Controller('contact')
 export class ContactController {
@@ -27,6 +30,8 @@ export class ContactController {
     private readonly findContactByIdUseCase: FindContactByIdUseCase,
     @Inject(ListContactProxy.Token)
     private readonly listContactUseCase: ListContactUseCase,
+    @Inject(NotifyProxy.Token)
+    private readonly notifyUseCase: NotifyUseCase,
   ) {}
 
   @GrpcMethod(GRPCService.CONTACT)
@@ -73,13 +78,24 @@ export class ContactController {
   ): Observable<Result<Contact, ErrorResponse>> {
     const subject = new Subject<Result<Contact, ErrorResponse>>();
 
+    let userId: User['id'];
     const onNext = async (message: CreateContactDto) => {
       const result = await this.createContactUseCase.run(message);
+
+      if (!userId) {
+        userId = message.userId;
+      }
 
       subject.next(result);
     };
 
-    const onComplete = () => subject.complete();
+    const onComplete = () => {
+      this.notifyUseCase.integrationProgress(
+        { progress: 100, userId },
+        { message: 'Integration completed', should: true },
+      );
+      return subject.complete();
+    };
 
     messages.subscribe({
       next: onNext,
