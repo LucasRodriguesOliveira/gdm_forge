@@ -33,6 +33,7 @@ export class ContactRepository implements IContactRepository {
 
     if (query?.name) {
       filter = {
+        ...filter,
         name: query.name,
       };
     }
@@ -44,7 +45,7 @@ export class ContactRepository implements IContactRepository {
       };
     }
 
-    const skip = query.pageSize * query.page;
+    const skip = query.pageSize * (query.page - 1);
     const limit = query.pageSize;
 
     const result = await this.contactModel

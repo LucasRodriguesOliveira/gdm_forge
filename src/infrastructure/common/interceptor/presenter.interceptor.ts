@@ -53,7 +53,7 @@ export class PresenterInterceptor<T> implements NestInterceptor {
           };
         }
 
-        if (this?.presenterOptions.paginated) {
+        if (this.presenterOptions.paginated) {
           return {
             value: {
               [this.presenterKey?.array]: plainToInstance(
