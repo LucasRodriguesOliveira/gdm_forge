@@ -91,7 +91,7 @@ export class ContactController {
 
     const onComplete = () => {
       this.notifyUseCase.integrationProgress(
-        { progress: 100, userId },
+        { progress: 1, userId },
         { message: 'Integration completed', should: true },
       );
       return subject.complete();
