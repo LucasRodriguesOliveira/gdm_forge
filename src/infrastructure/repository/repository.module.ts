@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { DatabaseModule } from '../database/database.module';
 import { ContactRepository } from './contact.repository';
+import { MongooseModule } from '@nestjs/mongoose';
+import { mongooseDefinitions } from '../database/mongoose/mongoose.definition';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [MongooseModule.forFeature(mongooseDefinitions)],
   providers: [ContactRepository],
   exports: [ContactRepository],
 })

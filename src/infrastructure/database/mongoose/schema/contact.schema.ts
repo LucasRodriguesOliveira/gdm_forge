@@ -1,20 +1,24 @@
-import mongoose, { Document, ObjectId } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
-export const ContactSchema = new mongoose.Schema({
-  oldid: Number,
-  name: String,
-  phone: String,
-  state: String,
-  userId: String,
-});
+@Schema()
+export class Contact {
+  @Prop()
+  oldid: number;
 
-export const contactSchemaName = 'Contact';
+  @Prop()
+  name: string;
 
-export interface IContactModel extends Document {
-  readonly _id: ObjectId;
-  readonly oldid: number;
-  readonly name: string;
-  readonly phone: string;
-  readonly state: string;
-  readonly userId: string;
+  @Prop()
+  phone: string;
+
+  @Prop()
+  state: string;
+
+  @Prop()
+  userId: string;
 }
+
+export type ContactDocument = HydratedDocument<Contact>;
+
+export const ContactSchema = SchemaFactory.createForClass(Contact);

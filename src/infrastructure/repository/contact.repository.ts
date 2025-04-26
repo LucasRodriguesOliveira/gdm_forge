@@ -1,33 +1,30 @@
-import { Inject } from '@nestjs/common';
 import {
   IContactRepository,
   QueryContactOptions,
 } from 'src/domain/repository/contact-repository.interface';
-import { contactProviderToken } from '../database/mongoose/contact.provider';
 import { Model, RootFilterQuery } from 'mongoose';
-import { IContactModel } from '../database/mongoose/schema/contact.schema';
-import { Contact } from 'src/domain/model/contact.model';
 import { PaginatedContact } from '../../domain/repository/paginated-contact.result';
+import { InjectModel } from '@nestjs/mongoose';
+import { Contact } from '../database/mongoose/schema/contact.schema';
+import { plainToInstance } from 'class-transformer';
+import { ContactModel } from '../../domain/model/contact.model';
 
 export class ContactRepository implements IContactRepository {
   constructor(
-    @Inject(contactProviderToken)
-    private contactModel: Model<IContactModel>,
+    @InjectModel(Contact.name)
+    private contactModel: Model<Contact>,
   ) {}
 
-  public async insert(contactData: Partial<Contact>): Promise<Contact> {
-    const contactCreated = new this.contactModel(contactData);
+  public async insert(
+    contactData: Partial<ContactModel>,
+  ): Promise<ContactModel> {
+    const contactCreated = await this.contactModel.create(contactData);
 
-    const result = await contactCreated.save();
-
-    return {
-      ...result.toJSON(),
-      _id: `${result._id}`,
-    };
+    return plainToInstance(ContactModel, contactCreated.toObject());
   }
 
   public async findAll(query: QueryContactOptions): Promise<PaginatedContact> {
-    let filter: RootFilterQuery<IContactModel> = {
+    let filter: RootFilterQuery<Contact> = {
       userId: query.userId,
     };
 
@@ -56,26 +53,23 @@ export class ContactRepository implements IContactRepository {
 
     return {
       total: count,
-      contacts: result.map((item) => ({
-        ...item.toJSON(),
-        _id: `${item._id}`,
-      })),
+      contacts: plainToInstance(
+        ContactModel,
+        result.map((item) => item.toObject()),
+      ),
       page: query.page,
       pageSize: query.pageSize,
     };
   }
 
   public async findById(
-    contactId: Contact['_id'],
+    contactId: ContactModel['_id'],
     userId: string,
-  ): Promise<Contact> {
+  ): Promise<ContactModel> {
     const result = await this.contactModel
       .findOne({ _id: contactId, userId })
       .exec();
 
-    return {
-      ...result.toJSON(),
-      _id: `${result._id}`,
-    };
+    return plainToInstance(ContactModel, result.toObject());
   }
 }
