@@ -3,7 +3,7 @@ gdm_forge
 
 GDM Back-end engineer test Project
 
-![Static Badge](https://img.shields.io/badge/Converage-0%25-green)
+![Static Badge](https://img.shields.io/badge/Converage-100%25-green)
 
 ## Description
 
@@ -13,6 +13,8 @@ NoSQL database such as MongoDB
 ## Project setup
 
 It's highly recommended to use docker for this project
+
+Complete and more succinct documentation can be found at Eraser (available only under direct request by email, or previously authorized by the author)
 
 ```bash
 $ docker compose create --build
@@ -81,9 +83,6 @@ We're halfway there! Now, go to [Scribe](https://github.com/LucasRodriguesOlivei
 ```bash
 # unit tests
 $ yarn test
-
-# e2e tests
-$ yarn test:e2e
 
 # test coverage
 $ yarn test:cov
