@@ -28,7 +28,7 @@ To create a new network, it's pretty simple:
 
 ```bash
 $ docker network create <network_name>
-# I would suggest `gdm_rabbitmq` for semantics
+# I would suggest `gdm_rabbitmq` for semantics sake
 
 $ docker network connect <network_name> gdm_whisper-rmq-1
 ```
