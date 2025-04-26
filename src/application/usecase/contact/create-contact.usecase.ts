@@ -1,5 +1,5 @@
 import { ILoggerService } from 'src/domain/logger/logger.interface';
-import { Contact } from 'src/domain/model/contact.model';
+import { ContactModel } from 'src/domain/model/contact.model';
 import { IContactRepository } from 'src/domain/repository/contact-repository.interface';
 import { ErrorResponse } from 'src/domain/types/error.interface';
 import { Result } from 'src/domain/types/result';
@@ -12,8 +12,8 @@ export class CreateContactUseCase {
   ) {}
 
   public async run(
-    contactData: Partial<Contact>,
-  ): Promise<Result<Contact, ErrorResponse>> {
+    contactData: Partial<ContactModel>,
+  ): Promise<Result<ContactModel, ErrorResponse>> {
     try {
       const contactCreated = await this.contactRepository.insert(contactData);
 

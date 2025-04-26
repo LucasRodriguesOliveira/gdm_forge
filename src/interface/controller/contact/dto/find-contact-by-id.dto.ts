@@ -1,6 +1,6 @@
-import { Contact } from '../../../../domain/model/contact.model';
+import { ContactModel } from '../../../../domain/model/contact.model';
 
 export interface FindContactById {
-  id: Contact['_id'];
+  id: ContactModel['_id'];
   userId: string;
 }

@@ -1,4 +1,4 @@
-import { Contact } from '../model/contact.model';
+import { ContactModel } from '../model/contact.model';
 import { PaginatedContact } from './paginated-contact.result';
 
 export interface QueryContactOptions {
@@ -10,7 +10,10 @@ export interface QueryContactOptions {
 }
 
 export interface IContactRepository {
-  insert(contact: Partial<Contact>): Promise<Contact>;
-  findById(contactId: Contact['_id'], userId: string): Promise<Contact>;
+  insert(contact: Partial<ContactModel>): Promise<ContactModel>;
+  findById(
+    contactId: ContactModel['_id'],
+    userId: string,
+  ): Promise<ContactModel>;
   findAll(query: QueryContactOptions): Promise<PaginatedContact>;
 }

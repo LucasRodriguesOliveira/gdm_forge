@@ -1,4 +1,4 @@
-export class Contact {
+export class ContactModel {
   _id: string;
   oldid: number;
   name: string;

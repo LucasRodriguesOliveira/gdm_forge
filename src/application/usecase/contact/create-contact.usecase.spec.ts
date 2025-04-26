@@ -38,7 +38,8 @@ describe('CreateContactUseCase', () => {
 
   describe('Create contact', () => {
     const contactData: CreateContactDto = {
-      id: faker.number.int(),
+      userId: faker.string.uuid(),
+      oldid: faker.number.int(),
       name: faker.person.fullName(),
       phone: fakerPT_BR.phone.number({ style: 'national' }),
       state: fakerPT_BR.location.state({ abbreviated: true }),

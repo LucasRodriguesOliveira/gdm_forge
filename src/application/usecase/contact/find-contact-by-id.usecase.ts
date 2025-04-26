@@ -1,9 +1,9 @@
 import { ILoggerService } from 'src/domain/logger/logger.interface';
-import { Contact } from 'src/domain/model/contact.model';
+import { ContactModel } from 'src/domain/model/contact.model';
 import { IContactRepository } from 'src/domain/repository/contact-repository.interface';
-import { ErrorCode } from 'src/domain/types/error-code.enum';
 import { ErrorResponse } from 'src/domain/types/error.interface';
 import { Result } from 'src/domain/types/result';
+import { ErrorCode } from '../../../domain/types/error-code.enum';
 
 export class FindContactByIdUseCase {
   constructor(
@@ -12,9 +12,9 @@ export class FindContactByIdUseCase {
   ) {}
 
   public async run(
-    contactId: Contact['_id'],
+    contactId: ContactModel['_id'],
     userId: string,
-  ): Promise<Result<Contact, ErrorResponse>> {
+  ): Promise<Result<ContactModel, ErrorResponse>> {
     try {
       const contact = await this.contactRepository.findById(contactId, userId);
 

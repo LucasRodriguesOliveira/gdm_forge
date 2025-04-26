@@ -1,8 +1,8 @@
 import { Exclude, Expose } from 'class-transformer';
-import { Contact } from 'src/domain/model/contact.model';
+import { ContactModel } from '../../../../domain/model/contact.model';
 
 @Exclude()
-export class ContactResult extends Contact {
+export class ContactResult extends ContactModel {
   @Expose()
   _id: string;
 

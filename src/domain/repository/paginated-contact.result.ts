@@ -1,7 +1,7 @@
-import { Contact } from '../model/contact.model';
+import { ContactModel } from '../model/contact.model';
 
 export class PaginatedContact {
-  contacts: Contact[];
+  contacts: ContactModel[];
   page: number;
   pageSize: number;
   total: number;

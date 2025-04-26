@@ -1,10 +1,10 @@
 import { Provider } from '@nestjs/common';
-import { ListContactUseCase } from 'src/application/usecase/contact/list-contact.usecase';
-import { ILoggerService } from 'src/domain/logger/logger.interface';
-import { IContactRepository } from 'src/domain/repository/contact-repository.interface';
-import { LoggerService } from 'src/infrastructure/logger/logger.service';
-import { ContactRepository } from 'src/infrastructure/repository/contact.repository';
 import { Proxy } from '../..';
+import { IContactRepository } from '../../../../domain/repository/contact-repository.interface';
+import { ILoggerService } from '../../../../domain/logger/logger.interface';
+import { ListContactUseCase } from '../../../../application/usecase/contact/list-contact.usecase';
+import { ContactRepository } from '../../../repository/contact.repository';
+import { LoggerService } from '../../../logger/logger.service';
 
 const token = Symbol('__LIST_CONTACT_USE_CASE__');
 const provider: Provider = {

@@ -3,10 +3,10 @@ import {
   IContactRepository,
   QueryContactOptions,
 } from 'src/domain/repository/contact-repository.interface';
-import { ErrorCode } from 'src/domain/types/error-code.enum';
 import { ErrorResponse } from 'src/domain/types/error.interface';
 import { Result } from 'src/domain/types/result';
 import { PaginatedContact } from '../../../domain/repository/paginated-contact.result';
+import { ErrorCode } from '../../../domain/types/error-code.enum';
 
 export class ListContactUseCase {
   constructor(
